@@ -8,7 +8,7 @@
 #include <fstream>
 using namespace std;
 
-//Linked List Start
+//This is the log linked list
 struct log
 {
 	string LOG;
@@ -19,6 +19,7 @@ struct log
 		down = NULL;
 	}
 };
+
 struct log_handler
 {
 	int Account_Number;
@@ -33,6 +34,32 @@ struct log_handler
 };
 
 log_handler *head = NULL;
+
+void deletion_for_log(int account_number)
+{
+	if(head==NULL)
+		return;
+
+	if(head->Account_Number==account_number)
+	{
+		log_handler *temp=head;
+		head=head->next;
+		delete temp;
+		return;
+	}
+	log_handler *temp=head;
+	while(temp->next!=NULL)
+	{
+		if(temp->next->Account_Number==account_number)
+		{
+			log_handler *n=temp->next->next;
+			log_handler *todel=temp->next;
+			temp->next=n;
+			delete todel;
+			return;
+		}
+	}
+}
 
 void insertion_for_log(int account_number)	//Insertion of Account number in linked list
 {
@@ -163,7 +190,6 @@ struct node
 	}
 };
 node *temp, *temp1, *temp2, *tempcell = NULL;
-/////////////////////////////////////////////////////////////////////////////////////////Main Functions used in AVL
 // Max Function
 int max(int a, int b)
 {
@@ -195,8 +221,6 @@ node* left_rotation(node *temp2)
 	temp2->right = temp1->left;
 	temp1->left = temp2;
 
-	temp2->height = max(height(temp2->left), height(temp2->right)) + 1;
-	temp1->height = max(height(temp1->left), height(temp1->right)) + 1;
 	return temp1;
 }
 
@@ -206,9 +230,6 @@ node* right_rotation(node *temp2)
 	temp1 = temp2->left;
 	temp2->left = temp1->right;
 	temp1->right = temp2;
-
-	temp2->height = max(height(temp2->left), height(temp2->right)) + 1;
-	temp1->height = max(height(temp1->left), height(temp1->right)) + 1;
 
 	return temp1;
 }
@@ -276,7 +297,6 @@ node* balance(node *temp)
 		}
 	}
 
-	temp->height = max(height(temp->left), height(temp->right)) + 1;
 	return temp;
 }
 
@@ -296,7 +316,6 @@ node* insertion(node *temp, string name, string aad, string gen, string type, in
 		temp->bala = bal;
 		temp->left = NULL;
 		temp->right = NULL;
-		temp->height = 0;
 		return temp;
 	}
 
@@ -332,7 +351,6 @@ node* insertion(node *temp, string name, string aad, string gen, string type, in
 		}
 	}
 
-	temp->height = max(height(temp->left), height(temp->right)) + 1;
 	return temp;
 }
 
@@ -548,7 +566,7 @@ int with_draw(node *temp, int acc_num, string PIN, int bal)	////////////////////
 	return 0;
 }
 
-int change_info(struct node *temp, string name, string aad, string gender, string type, int acc_num, string PIN)	///////////////////////// Change Info
+int change_info(node *temp, string name, string aad, string gender, string type, int acc_num, string PIN)	///////////////////////// Change Info
 {
 	while (temp != NULL)
 	{
@@ -654,12 +672,12 @@ int create_Acc()
 	cin.ignore();
 	getline(cin, full_name);
 	cout << endl;
-	cout << "                                            Enter AADHAR (const xxx const) : ";
+	cout << "                                            Enter AADHAR (XXXX XXX XXXX) : ";
 	getline(cin, aad);
 	while (!aadharcheck(aad))
 	{
 		cout << "                                            That is the wrong input" << endl;
-		cout << "                                            Enter AADHAR (const xxx const) : ";
+		cout << "                                            Enter AADHAR (XXXX XXX XXXX) : ";
 		getline(cin, aad);
 	}
 
@@ -793,9 +811,9 @@ void admin_panel()
 	cin >> b;
 	if (b == "1")
 	{
-		lol_admin_1: system("cls");
+		admin_1: system("cls");
 		create_Acc();
-		lol_admin_2: cout << endl;
+		admin_2: cout << endl;
 		cout << "                                            Press 1 to create another account or Press 8 to return to ADMIN PANEL: ";
 		cin >> admin_return;
 		if (admin_return == 8)
@@ -804,19 +822,19 @@ void admin_panel()
 		}
 		else if (admin_return == 1)
 		{
-			goto lol_admin_1;
+			goto admin_1;
 		}
 		else
 		{
 			cout << "                                            Wrong input, please input 1 or 8: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_admin_2;
+			goto admin_2;
 		}
 	}
 	else if (b == "2")
 	{
-		lol_admin_3: system("cls");
+		admin_3: system("cls");
 		cout << "                                         Enter the Account Number to Delete :";
 		cin >> admin_delete_cin;
 		cout << endl;
@@ -825,6 +843,7 @@ void admin_panel()
 		{
 			cout << "                                         Account number Found....!!!" << endl;
 			root = deletion(root, admin_delete_cin);
+			deletion_for_log(admin_delete_cin);
 			cout << "                                         Account is Deleted....!!!" << endl;
 		}
 		else
@@ -832,7 +851,7 @@ void admin_panel()
 			cout << "                                         Account not found ....!!!" << endl;
 		}
 
-		lol_admin_4: cout << "                                         Press 2 to Delete another account or Press 8 to return to ADMIN PANEL: ";
+		admin_4: cout << "                                         Press 2 to Delete another account or Press 8 to return to ADMIN PANEL: ";
 		cin >> admin_return;
 		if (admin_return == 8)
 		{
@@ -840,19 +859,19 @@ void admin_panel()
 		}
 		else if (admin_return == 2)
 		{
-			goto lol_admin_3;
+			goto admin_3;
 		}
 		else
 		{
 			cout << "                                         Invalid Input. Please enter 2 or 8 only: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_admin_4;
+			goto admin_4;
 		}
 	}
 	else if (b == "3")
 	{
-		lol_admin_5: system("cls");
+		admin_5: system("cls");
 		cout << "                                         Enter the Account Number to Search : ";
 		cin >> admin_search_cin;
 		result_admin_2 = search(root, admin_search_cin);
@@ -874,7 +893,7 @@ void admin_panel()
 		}
 
 		cout << endl;
-		lol_admin_6: cout << endl;
+		admin_6: cout << endl;
 		cout << endl;
 		cout << "                                         Press 3 to Search another account or Press 8 to return to ADMIN PANEL: ";
 		cin >> admin_return;
@@ -884,19 +903,19 @@ void admin_panel()
 		}
 		else if (admin_return == 3)
 		{
-			goto lol_admin_5;
+			goto admin_5;
 		}
 		else
 		{
 			cout << "                                         Invalid Input. Please enter 3 or 8 only: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_admin_6;
+			goto admin_6;
 		}
 	}
 	else if (b == "4")
 	{
-		lol_admin_7: system("cls");
+		admin_7: system("cls");
 		cout << "        ####################################################################################################################################" << endl;
 		cout << endl;
 		cout << "          " << "ACC_Number" << "                 " << "NAME" << "                   " << "AADHAR" << "                     " << "GENDER" << "            " << "Type" << "          " << "PIN" << "          " << "BALANCE" << endl;
@@ -904,7 +923,7 @@ void admin_panel()
 		cout << "        ####################################################################################################################################" << endl;
 		cout << endl;
 		print_for_admin(root);
-		lol_admin_8: cout << endl;
+		admin_8: cout << endl;
 		cout << endl;
 		cout << "                                         Press 4 to Show list of accounts or Press 8 to return to ADMIN PANEL: ";
 		cin >> admin_return;
@@ -914,24 +933,30 @@ void admin_panel()
 		}
 		else if (admin_return == 4)
 		{
-			goto lol_admin_7;
+			goto admin_7;
 		}
 		else
 		{
 			cout << "                                         IInvalid Input. Please enter 4 or 8 only: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_admin_8;
+			goto admin_8;
 		}
 	}
 	else if (b == "5")
 	{
-		lol_admin_9: system("cls");
+		admin_9: system("cls");
 		cout << "                                            Change Information of Account " << endl << endl;
-		cout << "                                            Enter User_Account Number : ";
+		cout << "                                            Enter User Account Number : ";
 		cin >> acc_1;
+		result_admin_3 = check_acc_pin(root, acc_1, pin_1);
+		if (result_admin_3 == 0)
+		{
+			cout << "                                            Account is not Present...!!!" << endl;
+			goto admin_10;
+		}
 		cout << endl;
-		cout << "                                            Enter User_Account PIN number : ";
+		cout << "                                            Enter User Account PIN number : ";
 		cin.ignore();
 		getline(cin, pin_1);
 		result_admin_3 = check_acc_pin(root, acc_1, pin_1);
@@ -939,7 +964,6 @@ void admin_panel()
 		{
 			cout << endl;
 			cout << "                                            Enter New Name / previous Name : ";
-			cin.ignore();
 			getline(cin, new_acc_1);
 			cout << endl;
 			cout << "                                            Enter New Aadhar / Previous Aadhar : ";
@@ -953,7 +977,6 @@ void admin_panel()
 
 			cout << endl;
 			cout << "                                            Enter Gender (M/F): ";
-			cin.ignore();
 			getline(cin, gen_1);
 			while (gen_1 != "M" && gen_1 != "F")
 			{
@@ -964,7 +987,6 @@ void admin_panel()
 
 			cout << endl;
 			cout << "                                            Enter Account Type C/S : ";
-			cin.ignore();
 			cin >> acc_type_1;
 			while (acc_type_1 != "C" && acc_type_1 != "S")
 			{
@@ -985,16 +1007,13 @@ void admin_panel()
 		{
 			cout << "                                            PIN is Incorrect...!!!" << endl;
 		}
-		else if (result_admin_3 == 0)
-		{
-			cout << "                                            Account is not Present...!!!" << endl;
-		}
 		else
 		{
 			cout << "                                            Account is not Present...!!!" << endl;
 		}
 
-		lol_admin_10: cout << endl;
+		admin_10: 
+		cout << endl;
 		cout << endl;
 		cout << "                                            Press 5 to Change other Account info or Press 8 to return to ADMIN PANEL:  ";
 		cin >> admin_return;
@@ -1004,19 +1023,19 @@ void admin_panel()
 		}
 		else if (admin_return == 5)
 		{
-			goto lol_admin_9;
+			goto admin_9;
 		}
 		else
 		{
 			cout << "                                         Invalid Input. Please enter 5 or 8 onl: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_admin_10;
+			goto admin_10;
 		}
 	}
 	else if (b == "6")
 	{
-		lol_admin_11: system("cls");
+		admin_11: system("cls");
 		cout << "                                         Enter Account Number: ";
 		cin >> admin_logs_cin;
 		result_admin_4 = display1(admin_logs_cin);
@@ -1039,12 +1058,12 @@ void admin_panel()
 			cout << "                                 No logs found" << endl;
 		}
 
-		lol_admin_12: cout << endl;
+		admin_12: cout << endl;
 		cout << "                                 Press 6 to Check Logs of  another account or Press 8 to return to ADMIN PANEL: ";
 		cin >> admin_return;
 		if (admin_return == 6)
 		{
-			goto lol_admin_11;
+			goto admin_11;
 		}
 		else if (admin_return == 8)
 		{
@@ -1055,12 +1074,12 @@ void admin_panel()
 			cout << "                                         Invalid Input. Please enter 6 or 8 only: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_admin_12;
+			goto admin_12;
 		}
 	}
 	else if (b == "7")
 	{
-		lol_admin_20: system("cls");
+		admin_20: system("cls");
 		cout << endl;
 		cout << "                                           Enter the date: ";
 		cin >> date;
@@ -1072,7 +1091,7 @@ void admin_panel()
 		displayByDate(date, month);
 		cout << endl;
 		cout << endl;
-		lol_admin_18: cout << "                                           Please Enter 7 to search for another date or 8 to return to ADMIN PANEL: ";
+		admin_18: cout << "                                           Please Enter 7 to search for another date or 8 to return to ADMIN PANEL: ";
 		cin >> admin_return;
 		if (admin_return == 8)
 		{
@@ -1080,14 +1099,14 @@ void admin_panel()
 		}
 		else if (admin_return == 7)
 		{
-			goto lol_admin_20;
+			goto admin_20;
 		}
 		else
 		{
 			cout << "                                         Invalid Input. Please enter 8 only: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_admin_18;
+			goto admin_18;
 		}
 	}
 	else if (b == "8")
@@ -1139,7 +1158,7 @@ void user_panel(int acc_no, string pin_no)
 		system("cls");
 		print_data(root, user_acc_no);
 		cout << endl << endl;
-		lol_staff_2:
+		staff_2:
 			cout << "                                         Press 5 to return to USER PANEL: ";
 		cin >> user_return;
 		if (user_return == 5)
@@ -1151,12 +1170,12 @@ void user_panel(int acc_no, string pin_no)
 			cout << "                                         Invalid Input. Please enter 5 only: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_staff_2;
+			goto staff_2;
 		}
 	}
 	else if (c == "2")
 	{
-		lol_user_3: system("cls");
+		user_3: system("cls");
 		cout << "                                         Enter the amount to deposit : ";
 		cin >> user_amount_to_dep;
 		cout << endl << endl;
@@ -1186,11 +1205,11 @@ void user_panel(int acc_no, string pin_no)
 		cout << endl;
 		cout << endl;
 
-		lol_user_4: cout << "                                         Press 2 to Deposit again or 5 to return to USER PANEL: ";
+		user_4: cout << "                                         Press 2 to Deposit again or 5 to return to USER PANEL: ";
 		cin >> user_return;
 		if (user_return == 2)
 		{
-			goto lol_user_3;
+			goto user_3;
 		}
 		else if (user_return == 5)
 		{
@@ -1201,12 +1220,12 @@ void user_panel(int acc_no, string pin_no)
 			cout << "                                         Invalid Input. Please enter 2 or 5 only: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_user_4;
+			goto user_4;
 		}
 	}
 	else if (c == "3")
 	{
-		lol_user_5: system("cls");
+		user_5: system("cls");
 		cout << "                                         Enter The Amount to be withdrawn : ";
 		cin >> user_amount_to_wdraw_1;
 		result_user_3 = with_draw(root, user_acc_no, user_pin_no, user_amount_to_wdraw_1);
@@ -1246,11 +1265,11 @@ void user_panel(int acc_no, string pin_no)
 		cout << endl;
 		cout << endl;
 
-		lol_user_6: cout << "                                         Press 3 to Withdraw again or 5 to return to USER PANEL: ";
+		user_6: cout << "                                         Press 3 to Withdraw again or 5 to return to USER PANEL: ";
 		cin >> user_return;
 		if (user_return == 3)
 		{
-			goto lol_user_5;
+			goto user_5;
 		}
 		else if (user_return == 5)
 		{
@@ -1261,12 +1280,12 @@ void user_panel(int acc_no, string pin_no)
 			cout << "                                         Invalid Input. Please enter 3 or 5 only: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_user_6;
+			goto user_6;
 		}
 	}
 	else if (c == "4")
 	{
-		lol_user_7: system("cls");
+		user_7: system("cls");
 		result_user_4 = display1(user_acc_no);
 		print_data(root, user_acc_no);
 		if (result_user_4 == 1)
@@ -1281,7 +1300,7 @@ void user_panel(int acc_no, string pin_no)
 			cout << "                                         Logs Not Found....!!!" << endl << endl;
 		}
 
-		lol_user_8: cout << endl;
+		user_8: cout << endl;
 		cout << endl;
 		cout << "                                   Press 5 to return to USER PANEL: ";
 		cin >> user_return;
@@ -1294,7 +1313,7 @@ void user_panel(int acc_no, string pin_no)
 			cout << "                                         Invalid Input. Please enter only 5: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_user_8;
+			goto user_8;
 		}
 	}
 	else if (c == "5")
@@ -1318,7 +1337,7 @@ void valid_user()
 	bool z;
 	int y;
 
-	lol_user_1:
+	user_1:
 		system("cls");
 	cout << "                                         Enter account number: ";
 	cin >> acc_no;
@@ -1329,7 +1348,7 @@ void valid_user()
 		cout << "                                         Account not Found!" << endl;
 		Sleep(sleep_value);
 		system("cls");
-		goto lol_user_2;
+		goto user_2;
 	}
 
 	cout << "                                         Enter Account PIN : ";
@@ -1342,18 +1361,18 @@ void valid_user()
 		cout << "                                         PIN is Incorrect" << endl;
 		Sleep(sleep_value);
 		system("cls");
-		goto lol_user_2;
+		goto user_2;
 	}
 	else
-		goto lol_user_3;
+		goto user_3;
 
-	lol_user_2:
+	user_2:
 		system("cls");
-	cout << "                                         Press 1 to try again or 2 to return to Main meun: ";
+	cout << "                                         Press 1 to try again or 2 to return to Main menu: ";
 	cin >> checker;
 	if (checker == 1)
 	{
-		goto lol_user_1;
+		goto user_1;
 	}
 	else if (checker == 2)
 	{
@@ -1364,10 +1383,10 @@ void valid_user()
 		cout << "                                         Invalid Input. Please enter 1 or 2 only: " << endl;
 		Sleep(sleep_value);
 		system("cls");
-		goto lol_user_2;
+		goto user_2;
 	}
 
-	lol_user_3:
+	user_3:
 		user_panel(acc_no, pin_no);
 }
 
@@ -1402,7 +1421,7 @@ void atm_panel()
 	cin >> d;
 	if (d == "1")
 	{
-		lol_atm_1: system("cls");
+		atm_1: system("cls");
 		cout << "                                         Enter account number: ";
 		cin >> atm_acc_no;
 		z = search(root, atm_acc_no);
@@ -1412,7 +1431,7 @@ void atm_panel()
 			cout << "                                         Account not Found!" << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_atm_2;
+			goto atm_2;
 		}
 
 		cout << "                                         Enter Account PIN : ";
@@ -1425,7 +1444,7 @@ void atm_panel()
 			cout << "                                         PIN is Incorrect" << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_atm_2;
+			goto atm_2;
 		}
 
 		cout << "                                         Enter the amount to withdraw : ";
@@ -1443,7 +1462,7 @@ void atm_panel()
 		trash = deposit(root, atm_acc_no, atm_pin_no, atm_amount_to_wdraw);
 		cout << "                                                   Status "
 		"BEFORE"
-		" Depositing Amount in ACCOUNT" << endl;
+		" WIITHDRAWING Amount from ACCOUNT" << endl;
 		cout << endl;
 		print_data(root, atm_acc_no);
 		cout << endl;
@@ -1464,17 +1483,17 @@ void atm_panel()
 			string str1 = to_string(atm_amount_to_wdraw);
 			string add = "Amount " + str1;
 			string add1 = add + " has been withdrawn at " + dt;
-			cout << "                                         Amount " << atm_amount_to_wdraw << " has been Deposited in Account Number " << atm_acc_no << endl;
+			cout << "                                         Amount " << atm_amount_to_wdraw << " has been withdrawn from Account Number " << atm_acc_no << endl;
 			insert_log(atm_acc_no, add1);
 		}
 
 		cout << endl;
 		cout << endl;
-		lol_atm_2: cout << "                                         Press 1 to withdraw from another account or 4 to return to ATM: ";
+		atm_2: cout << "                                         Press 1 to withdraw from another account or 4 to return to ATM: ";
 		cin >> atm_return;
 		if (atm_return == 1)
 		{
-			goto lol_atm_1;
+			goto atm_1;
 		}
 		else if (atm_return == 4)
 		{
@@ -1485,12 +1504,12 @@ void atm_panel()
 			cout << "                                         Invalid Input. Please enter 1 or 4 only: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_atm_2;
+			goto atm_2;
 		}
 	}
 	else if (d == "2")
 	{
-		lol_atm_3: system("cls");
+		atm_3: system("cls");
 		cout << "                                         Enter account number: ";
 		cin >> atm_acc_no;
 		z = search(root, atm_acc_no);
@@ -1500,7 +1519,7 @@ void atm_panel()
 			cout << "                                         Account not Found!" << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_atm_4;
+			goto atm_4;
 		}
 
 		cout << "                                         Enter Account PIN : ";
@@ -1513,7 +1532,7 @@ void atm_panel()
 			cout << "                                         PIN is Incorrect" << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_atm_4;
+			goto atm_4;
 		}
 
 		cout << "                                         Enter the amount to deposit : ";
@@ -1548,11 +1567,11 @@ void atm_panel()
 
 		cout << endl;
 		cout << endl;
-		lol_atm_4: cout << "                                         Press 2 to Deposit amount in another account or 4 to return to ATM menu: ";
+		atm_4: cout << "                                         Press 2 to Deposit amount in another account or 4 to return to ATM menu: ";
 		cin >> atm_return;
 		if (atm_return == 2)
 		{
-			goto lol_atm_3;
+			goto atm_3;
 		}
 		else if (atm_return == 4)
 		{
@@ -1563,7 +1582,7 @@ void atm_panel()
 			cout << "                                         Invalid Input. Please enter 2 or 4 only: " << endl;
 			Sleep(sleep_value);
 			system("cls");
-			goto lol_atm_2;
+			goto atm_2;
 		}
 	}
 	else if (d == "3")
@@ -1697,10 +1716,10 @@ int main()
 {
 	readFile();
 	ofstream Database;
-	Database.open("Database.txt", ios::out | ios::trunc);
+	Database.open("Database.txt", ios::trunc);
 	string a;
 	string b;
-	system("MODE 150, 40");
+	//system("MODE 150, 40");
 	jump1:
 		cout << "\n";
 	cout << "\n";
